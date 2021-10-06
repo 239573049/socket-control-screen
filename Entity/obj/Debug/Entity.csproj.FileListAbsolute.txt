@@ -1,0 +1,12 @@
+D:\source\repos\SocketService\Entity\bin\Debug\Entity.dll
+D:\source\repos\SocketService\Entity\bin\Debug\Entity.pdb
+D:\source\repos\SocketService\Entity\obj\Debug\Entity.csproj.CoreCompileInputs.cache
+D:\source\repos\SocketService\Entity\obj\Debug\Entity.dll
+D:\source\repos\SocketService\Entity\obj\Debug\Entity.pdb
+D:\source\repos\SocketService\Entity\obj\Debug\Entity.csproj.AssemblyReference.cache
+D:\project\SocketService\Entity\bin\Debug\Entity.dll
+D:\project\SocketService\Entity\bin\Debug\Entity.pdb
+D:\project\SocketService\Entity\obj\Debug\Entity.csproj.AssemblyReference.cache
+D:\project\SocketService\Entity\obj\Debug\Entity.csproj.CoreCompileInputs.cache
+D:\project\SocketService\Entity\obj\Debug\Entity.dll
+D:\project\SocketService\Entity\obj\Debug\Entity.pdb

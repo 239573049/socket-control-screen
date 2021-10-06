@@ -1,0 +1,10 @@
+D:\project\SocketService\Util\bin\Release\Util.dll
+D:\project\SocketService\Util\bin\Release\Util.pdb
+D:\project\SocketService\Util\bin\Release\ICSharpCode.SharpZipLib.dll
+D:\project\SocketService\Util\bin\Release\ICSharpCode.SharpZipLib.pdb
+D:\project\SocketService\Util\bin\Release\ICSharpCode.SharpZipLib.xml
+D:\project\SocketService\Util\obj\Release\Util.csproj.AssemblyReference.cache
+D:\project\SocketService\Util\obj\Release\Util.csproj.CoreCompileInputs.cache
+D:\project\SocketService\Util\obj\Release\Util.csproj.CopyComplete
+D:\project\SocketService\Util\obj\Release\Util.dll
+D:\project\SocketService\Util\obj\Release\Util.pdb

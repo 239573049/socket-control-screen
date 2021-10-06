@@ -1,0 +1,6 @@
+D:\project\SocketService\Entity\bin\Release\Entity.dll
+D:\project\SocketService\Entity\bin\Release\Entity.pdb
+D:\project\SocketService\Entity\obj\Release\Entity.csproj.AssemblyReference.cache
+D:\project\SocketService\Entity\obj\Release\Entity.csproj.CoreCompileInputs.cache
+D:\project\SocketService\Entity\obj\Release\Entity.dll
+D:\project\SocketService\Entity\obj\Release\Entity.pdb
