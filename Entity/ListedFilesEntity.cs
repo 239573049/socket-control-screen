@@ -20,5 +20,9 @@ namespace Entity
         /// 是否文件
         /// </summary>
         public bool IsFile { get; set; }
+        /// <summary>
+        /// 绝对路径
+        /// </summary>
+        public string OlutePath { get; set; }
     }
 }

@@ -87,6 +87,7 @@ namespace SocketService
                             break;
                         case MainSocketEnum.Clipboard:
                             if (ClipboardData != null && ClipboardData != mainSocket.Data) {
+                                ClipboardData = mainSocket.Data;
                                 Clipboard.SetText(mainSocket.Data);
                             }
                             break;
@@ -97,7 +98,10 @@ namespace SocketService
                         case MainSocketEnum.LeftClick:
                             break;
                         case MainSocketEnum.ListedFiles:
-
+                            if(sockets.RemoteEndPoint.ToString()== fileListForm.socket.RemoteEndPoint.ToString())
+                            {
+                                fileListForm.PathSocket(mainSocket.Data);
+                            }
                             break;
                         default:
                             throw new Exception($"未设置状态值{mainSocket.Statue}");
@@ -186,6 +190,7 @@ namespace SocketService
             if (fileListForm == null)
             {
                 fileListForm = new FileListForm();
+                fileListForm.socket = socket;
                 fileListForm.Show();
                 var data = new MainSocket()
                 {

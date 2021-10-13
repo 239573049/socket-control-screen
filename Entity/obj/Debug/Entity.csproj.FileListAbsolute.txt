@@ -16,3 +16,9 @@ D:\项目文件\socket-control-screen\Entity\obj\Debug\Entity.csproj.AssemblyRef
 D:\项目文件\socket-control-screen\Entity\obj\Debug\Entity.csproj.CoreCompileInputs.cache
 D:\项目文件\socket-control-screen\Entity\obj\Debug\Entity.dll
 D:\项目文件\socket-control-screen\Entity\obj\Debug\Entity.pdb
+D:\项目文件\socket-control-screen - 副本\Entity\bin\Debug\Entity.dll
+D:\项目文件\socket-control-screen - 副本\Entity\bin\Debug\Entity.pdb
+D:\项目文件\socket-control-screen - 副本\Entity\obj\Debug\Entity.csproj.AssemblyReference.cache
+D:\项目文件\socket-control-screen - 副本\Entity\obj\Debug\Entity.csproj.CoreCompileInputs.cache
+D:\项目文件\socket-control-screen - 副本\Entity\obj\Debug\Entity.dll
+D:\项目文件\socket-control-screen - 副本\Entity\obj\Debug\Entity.pdb
