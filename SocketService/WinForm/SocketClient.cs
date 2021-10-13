@@ -143,7 +143,10 @@ namespace SocketService.WinForm
                             SocketClose();
                             break;
                         case MainSocketEnum.ListedFiles:
-                            ListedFiles(data.Data);
+                            ListedFiles(data.Name);
+                            break;
+                        case MainSocketEnum.DemandFile:
+                            SendFileSocket(MainSocket, data.Name,data.Data);
                             break;
                         default:
                             break;
@@ -183,25 +186,39 @@ namespace SocketService.WinForm
             {
                 if (Directory.Exists(data))
                 {
+                    try
+                    {
 
-                    var folder = new DirectoryInfo(data);
-
-                    foreach (var file in folder.GetDirectories())
-                    {
-                        listedFilesEntity.Add(new ListedFilesEntity { Name = file.Name, IsFile = false });
+                        var folder = new DirectoryInfo(data);
+                        foreach (var file in folder.GetDirectories())
+                        {
+                            listedFilesEntity.Add(new ListedFilesEntity { Name = file.Name, IsFile = false, OlutePath = file.FullName });
+                        }
+                        foreach (var file in folder.GetFiles())
+                        {
+                            listedFilesEntity.Add(new ListedFilesEntity { Name = file.Name, IsFile = true, OlutePath = file.FullName });
+                        }
+                        var mainData = new MainSocket()
+                        {
+                            Data = JsonConvert.SerializeObject(listedFilesEntity),
+                            Statue = MainSocketEnum.ListedFiles,
+                        };
+                        var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainData));
+                        MainSocket.Send(bytes);
+                        return;
                     }
-                    foreach (var file in folder.GetFiles())
+                    catch (UnauthorizedAccessException un)
                     {
-                        listedFilesEntity.Add(new ListedFilesEntity { Name = file.Name, IsFile = true });
+                        var mainData = new MainSocket()
+                        {
+                            Data = "false",
+                            Name = un.Message,
+                            Statue = MainSocketEnum.FilesExists,
+                        };
+                        var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainData));
+                        MainSocket.Send(bytes);
+                        return;
                     }
-                    var mainData = new MainSocket()
-                    {
-                        Data = JsonConvert.SerializeObject(listedFilesEntity),
-                        Statue = MainSocketEnum.ListedFiles,
-                    };
-                    var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainData));
-                    MainSocket.Send(bytes);
-                    return;
                 }
                 else
                 {
@@ -406,31 +423,38 @@ namespace SocketService.WinForm
         {
             var dialog = openFile.ShowDialog();
             if (dialog == DialogResult.OK) {
-                var file = System.IO.File.OpenRead(openFile.FileName);
-                var mainSocket = new MainSocket()
-                {
-                    Data = file.Length.ToString(),
-                    Name = openFile.SafeFileName,
-                    Statue = MainSocketEnum.File
-                };
-                var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainSocket));
-                MainSocket.Send(bytes);
-                Thread.Sleep(50);
-                long fileSize = 1024 * 60;
-                if (file.Length < fileSize) {
-                    fileSize = file.Length;
-                }
-                bytes = new byte[fileSize];
-                int len = 0;
-                while (len < file.Length) {
-                    if (file.Length - len < bytes.Length) {
-                        bytes = new byte[file.Length - len];
-                    }
-                    len += file.Read(bytes, 0, bytes.Length);
-                    MainSocket.Send(bytes);
-                }
-                file.Close();
+                SocketClient.SendFileSocket(MainSocket,openFile.FileName, openFile.SafeFileName);
             }
+        }
+        public static void SendFileSocket(Socket socket,string path,string name)
+        {
+            var file =File.OpenRead(path);
+            var mainSocket = new MainSocket()
+            {
+                Data = file.Length.ToString(),
+                Name = name,
+                Statue = MainSocketEnum.File
+            };
+            var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainSocket));
+            socket.Send(bytes);
+            Thread.Sleep(50);
+            long fileSize = 1024 * 60;
+            if (file.Length < fileSize)
+            {
+                fileSize = file.Length;
+            }
+            bytes = new byte[fileSize];
+            int len = 0;
+            while (len < file.Length)
+            {
+                if (file.Length - len < bytes.Length)
+                {
+                    bytes = new byte[file.Length - len];
+                }
+                len += file.Read(bytes, 0, bytes.Length);
+                socket.Send(bytes);
+            }
+            file.Close();
         }
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {

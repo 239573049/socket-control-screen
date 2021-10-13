@@ -152,6 +152,7 @@
             ((System.ComponentModel.ISupportInitialize)(this.mainSocketBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainSocketBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listedFilesEntityBindingSource)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.listedFilesEntityBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
