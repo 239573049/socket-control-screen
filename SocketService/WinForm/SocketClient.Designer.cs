@@ -92,6 +92,7 @@ namespace SocketService.WinForm
             this.sendFile.TabIndex = 6;
             this.sendFile.Text = "发送文件";
             this.sendFile.UseVisualStyleBackColor = true;
+            this.sendFile.Click += new System.EventHandler(this.SendFile_Click);
             // 
             // returnService
             // 
