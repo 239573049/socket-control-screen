@@ -59,6 +59,18 @@ namespace Entity
         /// <summary>
         /// 右松开
         /// </summary>
-        RightUp
+        RightUp,
+        /// <summary>
+        /// 主动断开连接
+        /// </summary>
+        Break,
+        /// <summary>
+        /// 文件列表
+        /// </summary>
+        ListedFiles,
+        /// <summary>
+        /// 文件列表是否存在
+        /// </summary>
+        FilesExists
     }
 }

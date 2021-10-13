@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Util;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.ToolTip;
-
+using System.IO;
 namespace SocketService.WinForm
 {
     public partial class SocketClient : Form
@@ -138,25 +138,85 @@ namespace SocketService.WinForm
                         case MainSocketEnum.RightUp:
                             RightUpSocket(data);
                             break;
+                        case MainSocketEnum.Break:
+                            MessageBox.Show("断开服务器连接");
+                            SocketClose();
+                            break;
+                        case MainSocketEnum.ListedFiles:
+                            ListedFiles(data.Data);
+                            break;
                         default:
                             break;
                     }
                 }
                 catch (SocketException e) {
                     if (e.Message == "远程主机强迫关闭了一个现有的连接。") {
-                        socketClose();
+                        SocketClose();
                         return;
                     }
                 }
                 catch (ObjectDisposedException o) {
                     if (o.Message.Contains("无法访问已释放的对象")) {
-                        socketClose();
+                        SocketClose();
                         return;
                     }
                 }
 
             }
         }
+        public void ListedFiles(string data)
+        {
+            var listedFilesEntity = new List<ListedFilesEntity>();
+            if (string.IsNullOrEmpty(data))
+            {
+                var files= Directory.GetLogicalDrives().Select(a=>new ListedFilesEntity {Name=a,IsFile=false }).ToList();
+                listedFilesEntity.AddRange(files);
+                var mainData = new MainSocket() {
+                    Data = JsonConvert.SerializeObject(listedFilesEntity),
+                    Statue=MainSocketEnum.ListedFiles,
+                };
+                var bytes=Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainData));
+                MainSocket.Send(bytes);
+                return;
+            }
+            else
+            {
+                if (Directory.Exists(data))
+                {
+
+                    var folder = new DirectoryInfo(data);
+
+                    foreach (var file in folder.GetDirectories())
+                    {
+                        listedFilesEntity.Add(new ListedFilesEntity { Name = file.Name, IsFile = false });
+                    }
+                    foreach (var file in folder.GetFiles())
+                    {
+                        listedFilesEntity.Add(new ListedFilesEntity { Name = file.Name, IsFile = true });
+                    }
+                    var mainData = new MainSocket()
+                    {
+                        Data = JsonConvert.SerializeObject(listedFilesEntity),
+                        Statue = MainSocketEnum.ListedFiles,
+                    };
+                    var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainData));
+                    MainSocket.Send(bytes);
+                    return;
+                }
+                else
+                {
+                    var mainData = new MainSocket() {
+                        Data="false",
+                        Name= "文件路径不存在",
+                        Statue=MainSocketEnum.FilesExists,
+                    };
+                    var bytes=Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainData));
+                    MainSocket.Send(bytes);
+                    return;
+                }
+            }
+        }
+
         public void MoveSocket(MainSocket data)
         {
             var coordinate = data.Data.Split('|');
@@ -269,7 +329,7 @@ namespace SocketService.WinForm
             file.Close();
             return sw.ElapsedMilliseconds;
         }
-        public void socketClose()
+        public void SocketClose()
         {
             openSocket.Text = "连接服务器";
             Text = "";
@@ -393,17 +453,20 @@ namespace SocketService.WinForm
             sendFile.Enabled = false;
             new Thread(delegate ()
             {
-                while (isClose) {
-                    if (!string.IsNullOrEmpty(ip.Text) && !string.IsNullOrEmpty(port.Text) && isOpenSocket) {
+                while (isClose)
+                {
+                    if (!string.IsNullOrEmpty(ip.Text) && !string.IsNullOrEmpty(port.Text) && isOpenSocket)
+                    {
                         sendFile.Enabled = true;
                     }
-                    else {
+                    else
+                    {
                         sendFile.Enabled = false;
                     }
                     Thread.Sleep(100);
-                    //GC.Collect();
                 }
-            }).Start();
+            })
+            {IsBackground=true }.Start();
         }
 
         private void SocketClient_FormClosed(object sender, FormClosedEventArgs e)

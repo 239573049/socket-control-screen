@@ -1,5 +1,6 @@
 ﻿using Entity;
 using Newtonsoft.Json;
+using SocketService.WinForm;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -20,11 +21,12 @@ namespace SocketService
         private ComboBox socketData;
         string ClipboardData;
         private Thread t;
+        private FileListForm fileListForm=null;
         public void ConnectSocket(Dictionary<string,Socket> socketList,Socket mainSocket, RichTextBox log,ComboBox socketData)
         {
             this.socketData = socketData;
             this.log = log;
-            new Thread(delegate () {
+            var socketThread = new Thread(delegate () {
                 while (IsClose) {
                     try {
                         var socket = mainSocket.Accept();
@@ -32,7 +34,8 @@ namespace SocketService
                         socketList.Add(socket.RemoteEndPoint.ToString(), socket);
                         socketData.Items.Add(socket.RemoteEndPoint.ToString());
                         t = new Thread(ReceiveSocket);
-                        t.ApartmentState = ApartmentState.STA;
+                        t.SetApartmentState(ApartmentState.STA);
+                        t.IsBackground = true;
                         t.Start(socket);
                     }
                     catch (SocketException) {
@@ -40,14 +43,20 @@ namespace SocketService
                     }
 
                 }
-            }).Start();
+            });
+            socketThread.SetApartmentState(ApartmentState.STA);
+            socketThread.IsBackground = true;
+            socketThread.Start();
             new Thread(delegate () {
                 while (IsClose) {
                     var clipboar = Clipboard.GetText();
                     if (ClipboardData!= clipboar) {
-                        var data = new MainSocket();
-                        data.Data = clipboar;
-                        data.Statue = MainSocketEnum.Clipboard;
+                        ClipboardData= clipboar;
+                        var data = new MainSocket
+                        {
+                            Data = clipboar,
+                            Statue = MainSocketEnum.Clipboard
+                        };
                         foreach (var d in socketList) {
                             d.Value.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
                         }
@@ -87,6 +96,9 @@ namespace SocketService
                             break;
                         case MainSocketEnum.LeftClick:
                             break;
+                        case MainSocketEnum.ListedFiles:
+
+                            break;
                         default:
                             throw new Exception($"未设置状态值{mainSocket.Statue}");
                     }
@@ -124,7 +136,7 @@ namespace SocketService
             sw.Start();
             while (len < file.Length) {
                 if (file.Length - len < bytes.Length) {
-                    bytes=new byte[file.Length-len]; 
+                    bytes=new byte[file.Length-len];
                 }
                 len += file.Read(bytes, 0, bytes.Length);
                 socket.Send(bytes);
@@ -168,6 +180,26 @@ namespace SocketService
             sw.Stop();
             log.AppendText($"{socket.LocalEndPoint}：文件大小{Math.Round(((decimal)file.Length / (decimal)1024)/(decimal)1024, 2)}MB,上传文件耗时{sw.ElapsedMilliseconds}ms。\r\n");
             file.Close();
+        }
+        public void FileListForm(Socket socket)
+        {
+            if (fileListForm == null)
+            {
+                fileListForm = new FileListForm();
+                fileListForm.Show();
+                var data = new MainSocket()
+                {
+                    Data = "",
+                    Statue = MainSocketEnum.ListedFiles,
+                };
+                var json = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+                socket.Send(json);
+            }
+            else
+            {
+                fileListForm.Close();
+                fileListForm = null;
+            }
         }
         public void Close()
         {

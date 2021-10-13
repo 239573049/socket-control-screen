@@ -49,7 +49,6 @@ namespace SocketService
                     initialize();
                 }
             }
-            
         }
         public void initialize()
         {
@@ -118,12 +117,14 @@ namespace SocketService
                 mainSocket.Statue = MainSocketEnum.Screen;
                 var json = JsonConvert.SerializeObject(mainSocket);
                 socket.Value.Send(Encoding.UTF8.GetBytes(json));
-                screenShow = new ScreenShow();
-                screenShow.Widths = Convert.ToInt32(width.Text);
-                screenShow.Heights = Convert.ToInt32(height.Text);
-                screenShow.ip = data.Split(':')[0];
-                screenShow.ClientIp = socket.Key;
-                screenShow.Post = Convert.ToInt32(mainSocket.Data );
+                screenShow = new ScreenShow
+                {
+                    Widths = Convert.ToInt32(width.Text),
+                    Heights = Convert.ToInt32(height.Text),
+                    ip = data.Split(':')[0],
+                    ClientIp = socket.Key,
+                    Post = Convert.ToInt32(mainSocket.Data)
+                };
                 screenShow.Show();
                 GetForm.Visible = false;
             }
@@ -146,6 +147,21 @@ namespace SocketService
 
         private void SocketForm_FormClosing(object sender, FormClosingEventArgs e)
         {
+            var data = new MainSocket
+            {
+                Statue = MainSocketEnum.Break
+            };
+            var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+            try
+            {
+                foreach (var s in sockets)
+                {
+                    s.Value.Send(bytes);
+                }
+            }
+            catch (Exception)
+            {
+            }
             mainSocketManagement.Close();
             isClose = false;
             MainSocket.Close();
@@ -157,6 +173,28 @@ namespace SocketService
             SocketClient socketClient= new SocketClient();
             socketClient.Show();
             GetForm.Visible = false;
+        }
+
+        private void GetListedFiles_Click(object sender, EventArgs e)
+        {
+            if(SocketList.SelectedIndex == -1)
+            {
+                MessageBox.Show("请先选择客户端");
+                return;
+            }
+
+            var data = new MainSocket()
+            {
+                Data = "",
+                Statue = MainSocketEnum.ListedFiles,
+            };
+            var json = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+            var socket = sockets.Where(a => a.Key == (string)SocketList.Items[SocketList.SelectedIndex])
+                 .FirstOrDefault();
+            if (!socket.Equals(null))
+            {
+                mainSocketManagement.FileListForm(socket.Value);
+            }
         }
     }
 }

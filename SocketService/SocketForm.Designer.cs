@@ -40,6 +40,7 @@
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.label3 = new System.Windows.Forms.Label();
             this.orClient = new System.Windows.Forms.Button();
+            this.GetListedFiles = new System.Windows.Forms.Button();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
@@ -162,11 +163,22 @@
             this.orClient.UseVisualStyleBackColor = true;
             this.orClient.Click += new System.EventHandler(this.orClient_Click);
             // 
+            // GetListedFiles
+            // 
+            this.GetListedFiles.Location = new System.Drawing.Point(635, 12);
+            this.GetListedFiles.Name = "GetListedFiles";
+            this.GetListedFiles.Size = new System.Drawing.Size(142, 23);
+            this.GetListedFiles.TabIndex = 12;
+            this.GetListedFiles.Text = "获取客户端文件列表";
+            this.GetListedFiles.UseVisualStyleBackColor = true;
+            this.GetListedFiles.Click += new System.EventHandler(this.GetListedFiles_Click);
+            // 
             // SocketForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(790, 264);
+            this.Controls.Add(this.GetListedFiles);
             this.Controls.Add(this.orClient);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.groupBox2);
@@ -202,6 +214,7 @@
         private System.Windows.Forms.GroupBox groupBox2;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Button orClient;
+        private System.Windows.Forms.Button GetListedFiles;
     }
 }
 

@@ -13,3 +13,13 @@ D:\project\SocketService\Util\bin\Debug\ICSharpCode.SharpZipLib.dll
 D:\project\SocketService\Util\bin\Debug\ICSharpCode.SharpZipLib.pdb
 D:\project\SocketService\Util\bin\Debug\ICSharpCode.SharpZipLib.xml
 D:\project\SocketService\Util\obj\Debug\Util.csproj.AssemblyReference.cache
+D:\项目文件\socket-control-screen\Util\bin\Debug\Util.dll
+D:\项目文件\socket-control-screen\Util\bin\Debug\Util.pdb
+D:\项目文件\socket-control-screen\Util\bin\Debug\ICSharpCode.SharpZipLib.dll
+D:\项目文件\socket-control-screen\Util\bin\Debug\ICSharpCode.SharpZipLib.pdb
+D:\项目文件\socket-control-screen\Util\bin\Debug\ICSharpCode.SharpZipLib.xml
+D:\项目文件\socket-control-screen\Util\obj\Debug\Util.csproj.AssemblyReference.cache
+D:\项目文件\socket-control-screen\Util\obj\Debug\Util.csproj.CoreCompileInputs.cache
+D:\项目文件\socket-control-screen\Util\obj\Debug\Util.csproj.CopyComplete
+D:\项目文件\socket-control-screen\Util\obj\Debug\Util.dll
+D:\项目文件\socket-control-screen\Util\obj\Debug\Util.pdb
