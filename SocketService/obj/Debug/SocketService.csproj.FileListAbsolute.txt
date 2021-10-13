@@ -69,7 +69,6 @@ D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.WinF
 D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.WinForm.SocketClient.resources
 D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.csproj.GenerateResource.cache
 D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.csproj.CoreCompileInputs.cache
-D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.csproj.CopyComplete
 D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.exe
 D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.pdb
 D:\项目文件\socket-control-screen\SocketService\obj\Debug\SocketService.WinForm.FileListForm.resources

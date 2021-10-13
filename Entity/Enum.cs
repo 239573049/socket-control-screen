@@ -71,6 +71,10 @@ namespace Entity
         /// <summary>
         /// 文件列表是否存在
         /// </summary>
-        FilesExists
+        FilesExists,
+        /// <summary>
+        /// 请求文件
+        /// </summary>
+        DemandFile
     }
 }
