@@ -17,19 +17,22 @@ namespace SocketService
 {
     public class MainSocketManagement
     {
-        private static bool IsClose= true;
+        private static bool IsClose = true;
         private RichTextBox log;
         private ComboBox socketData;
         string ClipboardData;
         private Thread t;
-        private FileListForm fileListForm=null;
-        public void ConnectSocket(Dictionary<string,Socket> socketList,Socket mainSocket, RichTextBox log,ComboBox socketData)
+        private FileListForm fileListForm = null;
+        public void ConnectSocket(Dictionary<string, Socket> socketList, Socket mainSocket, RichTextBox log, ComboBox socketData)
         {
             this.socketData = socketData;
             this.log = log;
-            var socketThread = new Thread(delegate () {
-                while (IsClose) {
-                    try {
+            var socketThread = new Thread(delegate ()
+            {
+                while (IsClose)
+                {
+                    try
+                    {
                         var socket = mainSocket.Accept();
                         log.AppendText($"{socket.RemoteEndPoint}连接服务器成功");
                         socketList.Add(socket.RemoteEndPoint.ToString(), socket);
@@ -39,7 +42,8 @@ namespace SocketService
                         t.IsBackground = true;
                         t.Start(socket);
                     }
-                    catch (SocketException) {
+                    catch (SocketException)
+                    {
 
                     }
 
@@ -48,17 +52,21 @@ namespace SocketService
             socketThread.SetApartmentState(ApartmentState.STA);
             socketThread.IsBackground = true;
             socketThread.Start();
-            new Thread(delegate () {
-                while (IsClose) {
+            new Thread(delegate ()
+            {
+                while (IsClose)
+                {
                     var clipboar = Clipboard.GetText();
-                    if (ClipboardData!= clipboar) {
-                        ClipboardData= clipboar;
+                    if (ClipboardData != clipboar)
+                    {
+                        ClipboardData = clipboar;
                         var data = new MainSocket
                         {
                             Data = clipboar,
                             Statue = MainSocketEnum.Clipboard
                         };
-                        foreach (var d in socketList) {
+                        foreach (var d in socketList)
+                        {
                             d.Value.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data)));
                         }
                     }
@@ -69,12 +77,15 @@ namespace SocketService
         public void ReceiveSocket(object socket)
         {
             var sockets = socket as Socket;
-            var ip=sockets.RemoteEndPoint.ToString();
-            while (IsClose) {
-                try {
+            var ip = sockets.RemoteEndPoint.ToString();
+            while (IsClose)
+            {
+                try
+                {
                     sockets.Receive(new byte[0]);
                     var len = sockets.Available;
-                    if (len == 0) {
+                    if (len == 0)
+                    {
                         socketData.Items.Remove(ip);
                         log.AppendText($"{ip}断开连接\r\n");
                         return;
@@ -82,13 +93,15 @@ namespace SocketService
                     byte[] bytes = new byte[len];
                     sockets.Receive(bytes);
                     var mainSocket = JsonConvert.DeserializeObject<MainSocket>(Encoding.UTF8.GetString(bytes));
-                    switch (mainSocket.Statue) {
+                    switch (mainSocket.Statue)
+                    {
                         case MainSocketEnum.File:
                             log.AppendText($"{sockets.RemoteEndPoint}:正在上传文件：{mainSocket.Name}；文件大小：{Math.Round(((decimal)Convert.ToDecimal(mainSocket.Data) / (decimal)1024) / (decimal)1024, 2)}MB");
                             FileSocket(sockets, Convert.ToInt64(mainSocket.Data), mainSocket.Name);
                             break;
                         case MainSocketEnum.Clipboard:
-                            if (ClipboardData != null && ClipboardData != mainSocket.Data) {
+                            if (ClipboardData != null && ClipboardData != mainSocket.Data)
+                            {
                                 ClipboardData = mainSocket.Data;
                                 Clipboard.SetText(mainSocket.Data);
                             }
@@ -105,7 +118,7 @@ namespace SocketService
                                 MessageBox.Show(mainSocket.Name);
                                 return;
                             }
-                            if(sockets.RemoteEndPoint.ToString()== fileListForm.socket.RemoteEndPoint.ToString())
+                            if (sockets.RemoteEndPoint.ToString() == fileListForm.socket.RemoteEndPoint.ToString())
                             {
                                 fileListForm.PathSocket(mainSocket.Data);
                             }
@@ -117,40 +130,46 @@ namespace SocketService
                             throw new Exception($"未设置状态值{mainSocket.Statue}");
                     }
                 }
-                catch (JsonReaderException) {
+                catch (JsonReaderException)
+                {
                     Debug.WriteLine("json转换异常抛出异常不处理");
-                }catch (SocketException) {
+                }
+                catch (SocketException)
+                {
                     socketData.Items.Remove(ip);
                     log.AppendText($"{ip}断开连接");
                     return;
                 }
             }
         }
-        public void SendFileSocket(Socket socket,string fileName)
+        public void SendFileSocket(Socket socket, string fileName)
         {
-            var file = System.IO.File.Open(fileName,FileMode.Open);
+            var file = System.IO.File.Open(fileName, FileMode.Open);
             var length = file.Length;
-            var name = file.Name.Split('\\')[file.Name.Split('\\').Length-1];
+            var name = file.Name.Split('\\')[file.Name.Split('\\').Length - 1];
             var socketData = new MainSocket()
             {
-                Data=file.Length.ToString(),
-                Name= name,
-                Statue= MainSocketEnum.File
+                Data = file.Length.ToString(),
+                Name = name,
+                Statue = MainSocketEnum.File
             };
             var json = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(socketData));
             socket.Send(json);
             Thread.Sleep(50);
-            var sw=new Stopwatch();
+            var sw = new Stopwatch();
             long fileSize = 1024 * 60;
-            if (file.Length < fileSize) {
+            if (file.Length < fileSize)
+            {
                 fileSize = file.Length;
             }
-            var bytes=new byte[fileSize];
+            var bytes = new byte[fileSize];
             var len = 0;
             sw.Start();
-            while (len < file.Length) {
-                if (file.Length - len < bytes.Length) {
-                    bytes=new byte[file.Length-len];
+            while (len < file.Length)
+            {
+                if (file.Length - len < bytes.Length)
+                {
+                    bytes = new byte[file.Length - len];
                 }
                 len += file.Read(bytes, 0, bytes.Length);
                 socket.Send(bytes);
@@ -164,27 +183,33 @@ namespace SocketService
         /// </summary>
         /// <param name="socket"></param>
         /// <param name="length"></param>
-        private void FileSocket(Socket socket,long length,string name)
+        private void FileSocket(Socket socket, long length, string name)
         {
             socket.Receive(new byte[0]);
             var file = System.IO.File.Create(name);
             var sw = new Stopwatch();
             sw.Start();
             int len = 0;
-            if (length > 1024 * 1024 * 10) {
+            if (length > 1024 * 1024 * 10)
+            {
                 byte[] bytes = new byte[1024 * 60];
-                while (len < length) {
-                    if (length - len < bytes.Length) {
+                while (len < length)
+                {
+                    if (length - len < bytes.Length)
+                    {
                         bytes = new byte[length - len];
                     }
                     len += socket.Receive(bytes);
                     file.Write(bytes, 0, bytes.Length);
                 }
             }
-            else {
+            else
+            {
                 byte[] bytes = new byte[1024 * 60];
-                while (len < length) {
-                    if (length - len < bytes.Length) {
+                while (len < length)
+                {
+                    if (length - len < bytes.Length)
+                    {
                         bytes = new byte[length - len];
                     }
                     len += socket.Receive(bytes);
@@ -192,29 +217,22 @@ namespace SocketService
                 }
             }
             sw.Stop();
-            log.AppendText($"{socket.LocalEndPoint}：文件大小{Math.Round(((decimal)file.Length / (decimal)1024)/(decimal)1024, 2)}MB,上传文件耗时{sw.ElapsedMilliseconds}ms。\r\n");
+            log.AppendText($"{socket.LocalEndPoint}：文件大小{Math.Round(((decimal)file.Length / (decimal)1024) / (decimal)1024, 2)}MB,上传文件耗时{sw.ElapsedMilliseconds}ms。\r\n");
             file.Close();
         }
         public void FileListForm(Socket socket)
         {
-            if (fileListForm == null)
+            fileListForm = new FileListForm();
+            fileListForm.socket = socket;
+            fileListForm.Show();
+            var data = new MainSocket()
             {
-                fileListForm = new FileListForm();
-                fileListForm.socket = socket;
-                fileListForm.Show();
-                var data = new MainSocket()
-                {
-                    Data = "",
-                    Statue = MainSocketEnum.ListedFiles,
-                };
-                var json = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
-                socket.Send(json);
-            }
-            else
-            {
-                fileListForm.Close();
-                fileListForm = null;
-            }
+                Data = "",
+                Statue = MainSocketEnum.ListedFiles,
+            };
+            var json = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(data));
+            socket.Send(json);
+            SocketForm.GetForm.Visible = false;
         }
         public void Close()
         {

@@ -19,7 +19,6 @@ namespace SocketService.WinForm
     public partial class FileListForm : Form
     {
         public Socket socket { set; get; }
-        private string PresentPath = "";
         public List<ListedFilesEntity> listedFiles { set; get; } = new List<ListedFilesEntity>();
         public FileListForm()
         {
@@ -134,6 +133,11 @@ namespace SocketService.WinForm
             };
             var bytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainSocket));
             socket.Send(bytes);
+        }
+
+        private void FileListForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            SocketForm.GetForm.Visible = true;
         }
     }
 }

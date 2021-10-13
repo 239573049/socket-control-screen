@@ -30,15 +30,15 @@
         {
             this.components = new System.ComponentModel.Container();
             this.FileContainer = new System.Windows.Forms.SplitContainer();
+            this.path = new System.Windows.Forms.TextBox();
+            this.DownloadFile = new System.Windows.Forms.Button();
+            this.retreat = new System.Windows.Forms.Button();
             this.ListPath = new System.Windows.Forms.ListBox();
             this.listedFilesEntityBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.verificationUtilBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mainSocketBindingSource = new System.Windows.Forms.BindingSource(this.components);
             this.mainSocketBindingSource1 = new System.Windows.Forms.BindingSource(this.components);
             this.listedFilesEntityBindingSource = new System.Windows.Forms.BindingSource(this.components);
-            this.path = new System.Windows.Forms.TextBox();
-            this.retreat = new System.Windows.Forms.Button();
-            this.DownloadFile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.FileContainer)).BeginInit();
             this.FileContainer.Panel1.SuspendLayout();
             this.FileContainer.Panel2.SuspendLayout();
@@ -70,15 +70,38 @@
             this.FileContainer.SplitterDistance = 25;
             this.FileContainer.TabIndex = 0;
             // 
+            // path
+            // 
+            this.path.Location = new System.Drawing.Point(7, 1);
+            this.path.Name = "path";
+            this.path.Size = new System.Drawing.Size(686, 21);
+            this.path.TabIndex = 2;
+            // 
+            // DownloadFile
+            // 
+            this.DownloadFile.Location = new System.Drawing.Point(610, 31);
+            this.DownloadFile.Name = "DownloadFile";
+            this.DownloadFile.Size = new System.Drawing.Size(75, 23);
+            this.DownloadFile.TabIndex = 2;
+            this.DownloadFile.Text = "下载文件";
+            this.DownloadFile.UseVisualStyleBackColor = true;
+            this.DownloadFile.Click += new System.EventHandler(this.DownloadFile_Click);
+            // 
+            // retreat
+            // 
+            this.retreat.Location = new System.Drawing.Point(610, 3);
+            this.retreat.Name = "retreat";
+            this.retreat.Size = new System.Drawing.Size(75, 22);
+            this.retreat.TabIndex = 1;
+            this.retreat.Text = "后退";
+            this.retreat.UseVisualStyleBackColor = true;
+            this.retreat.Click += new System.EventHandler(this.retreat_Click);
+            // 
             // ListPath
             // 
             this.ListPath.DataBindings.Add(new System.Windows.Forms.Binding("SelectedValue", this.listedFilesEntityBindingSource1, "Name", true));
             this.ListPath.FormattingEnabled = true;
             this.ListPath.ItemHeight = 12;
-            this.ListPath.Items.AddRange(new object[] {
-            "123",
-            "123",
-            "123"});
             this.ListPath.Location = new System.Drawing.Point(3, 3);
             this.ListPath.Name = "ListPath";
             this.ListPath.Size = new System.Drawing.Size(598, 376);
@@ -105,33 +128,6 @@
             // 
             this.listedFilesEntityBindingSource.DataSource = typeof(Entity.ListedFilesEntity);
             // 
-            // path
-            // 
-            this.path.Location = new System.Drawing.Point(7, 1);
-            this.path.Name = "path";
-            this.path.Size = new System.Drawing.Size(686, 21);
-            this.path.TabIndex = 2;
-            // 
-            // retreat
-            // 
-            this.retreat.Location = new System.Drawing.Point(610, 3);
-            this.retreat.Name = "retreat";
-            this.retreat.Size = new System.Drawing.Size(75, 22);
-            this.retreat.TabIndex = 1;
-            this.retreat.Text = "后退";
-            this.retreat.UseVisualStyleBackColor = true;
-            this.retreat.Click += new System.EventHandler(this.retreat_Click);
-            // 
-            // DownloadFile
-            // 
-            this.DownloadFile.Location = new System.Drawing.Point(610, 31);
-            this.DownloadFile.Name = "DownloadFile";
-            this.DownloadFile.Size = new System.Drawing.Size(75, 23);
-            this.DownloadFile.TabIndex = 2;
-            this.DownloadFile.Text = "下载文件";
-            this.DownloadFile.UseVisualStyleBackColor = true;
-            this.DownloadFile.Click += new System.EventHandler(this.DownloadFile_Click);
-            // 
             // FileListForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
@@ -141,6 +137,7 @@
             this.Name = "FileListForm";
             this.ShowIcon = false;
             this.Text = "FileList";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FileListForm_FormClosing);
             this.Load += new System.EventHandler(this.FileListForm_Load);
             this.FileContainer.Panel1.ResumeLayout(false);
             this.FileContainer.Panel1.PerformLayout();
@@ -152,7 +149,6 @@
             ((System.ComponentModel.ISupportInitialize)(this.mainSocketBindingSource)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.mainSocketBindingSource1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.listedFilesEntityBindingSource)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.listedFilesEntityBindingSource1)).EndInit();
             this.ResumeLayout(false);
 
         }
