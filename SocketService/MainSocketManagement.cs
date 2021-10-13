@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using static System.Net.WebRequestMethods;
 
 namespace SocketService
 {
@@ -83,6 +84,7 @@ namespace SocketService
                     var mainSocket = JsonConvert.DeserializeObject<MainSocket>(Encoding.UTF8.GetString(bytes));
                     switch (mainSocket.Statue) {
                         case MainSocketEnum.File:
+                            log.AppendText($"{sockets.RemoteEndPoint}:正在上传文件：{mainSocket.Name}；文件大小：{Math.Round(((decimal)Convert.ToDecimal(mainSocket.Data) / (decimal)1024) / (decimal)1024, 2)}MB");
                             FileSocket(sockets, Convert.ToInt64(mainSocket.Data), mainSocket.Name);
                             break;
                         case MainSocketEnum.Clipboard:
@@ -98,10 +100,18 @@ namespace SocketService
                         case MainSocketEnum.LeftClick:
                             break;
                         case MainSocketEnum.ListedFiles:
+                            if (mainSocket.Data == "false")
+                            {
+                                MessageBox.Show(mainSocket.Name);
+                                return;
+                            }
                             if(sockets.RemoteEndPoint.ToString()== fileListForm.socket.RemoteEndPoint.ToString())
                             {
                                 fileListForm.PathSocket(mainSocket.Data);
                             }
+                            break;
+                        case MainSocketEnum.FilesExists:
+                            MessageBox.Show(mainSocket.Name);
                             break;
                         default:
                             throw new Exception($"未设置状态值{mainSocket.Statue}");
@@ -118,7 +128,7 @@ namespace SocketService
         }
         public void SendFileSocket(Socket socket,string fileName)
         {
-            var file = File.Open(fileName,FileMode.Open);
+            var file = System.IO.File.Open(fileName,FileMode.Open);
             var length = file.Length;
             var name = file.Name.Split('\\')[file.Name.Split('\\').Length-1];
             var socketData = new MainSocket()
@@ -157,7 +167,7 @@ namespace SocketService
         private void FileSocket(Socket socket,long length,string name)
         {
             socket.Receive(new byte[0]);
-            var file = File.Create(name);
+            var file = System.IO.File.Create(name);
             var sw = new Stopwatch();
             sw.Start();
             int len = 0;
