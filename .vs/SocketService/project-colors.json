@@ -1,0 +1,21 @@
+{
+  "Version": 1,
+  "ProjectMap": {
+    "8420aa47-f623-4857-8022-b42b74a864cb": {
+      "ProjectGuid": "8420aa47-f623-4857-8022-b42b74a864cb",
+      "DisplayName": "SocketService",
+      "ColorIndex": 0
+    },
+    "4cfad77c-08df-493b-bbb3-ccb072bfb0f3": {
+      "ProjectGuid": "4cfad77c-08df-493b-bbb3-ccb072bfb0f3",
+      "DisplayName": "Entity",
+      "ColorIndex": 1
+    },
+    "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3": {
+      "ProjectGuid": "a2fe74e1-b743-11d0-ae1a-00a0c90fffc3",
+      "DisplayName": "杂项文件",
+      "ColorIndex": -1
+    }
+  },
+  "NextColorIndex": 2
+}

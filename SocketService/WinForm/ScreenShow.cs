@@ -42,7 +42,7 @@ namespace SocketService.WinForm
         private void ScreenShow_Load(object sender, EventArgs e)
         {
             Size = new Size(Widths, Heights);
-            new Thread(SocketData).Start();
+            new Thread(SocketData) { IsBackground=true}.Start();
         }
         public void SocketData()
         {
@@ -222,7 +222,6 @@ namespace SocketService.WinForm
                 if (string.IsNullOrEmpty(mainSocket.Data)) return;
                 socket.Value.Send(Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(mainSocket)));
             }
-            Thread.Sleep(50);
         }
 
         private void images_MouseDown(object sender, MouseEventArgs e)

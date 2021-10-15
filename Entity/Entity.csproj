@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Enum.cs" />
+    <Compile Include="ListedFilesEntity.cs" />
     <Compile Include="MainSocket.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ScreenData.cs" />
