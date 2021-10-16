@@ -41,7 +41,7 @@ namespace SocketService.WinForm
                     MainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
                     IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip.Text), Convert.ToInt32(port.Text));
                     MainSocket.Connect(endPoint);
-                    new Thread(delegate () { Review(); }).Start();
+                    new Thread(delegate () { Review(); }) { IsBackground=true}.Start();
                     new Thread(delegate () {
                         while (isScreen) {
                             string data = Clipboard.GetText();
@@ -53,7 +53,8 @@ namespace SocketService.WinForm
                             }
                             Thread.Sleep(200);
                         }
-                    });
+                    })
+                    { IsBackground = true }.Start();
                 }
                 else {
                     isScreen = false;
@@ -80,7 +81,6 @@ namespace SocketService.WinForm
                     var strings = Encoding.UTF8.GetString(btes);
                     MainSocket data = null;
                     try {
-
                         data = JsonConvert.DeserializeObject<MainSocket>(strings);
                     }
                     catch (JsonSerializationException j) {
@@ -107,7 +107,8 @@ namespace SocketService.WinForm
                             new Thread(delegate ()
                             {
                                 ScreenSockets(Convert.ToInt32(data.Data));
-                            }).Start();
+                            })
+                            { IsBackground = true }.Start();
                             break;
                         case MainSocketEnum.Keyboard:
                             break;
@@ -358,8 +359,7 @@ namespace SocketService.WinForm
             if (socketScreen == null) {
 
                 socketScreen = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-                socketScreen.Bind(new IPEndPoint(IPAddress.Any, port));
-                socketScreen.Listen(int.MaxValue);
+                socketScreen.Connect(new IPEndPoint(IPAddress.Parse(ip.Text), port));
                 isScreen = true;
             }
 
@@ -367,8 +367,7 @@ namespace SocketService.WinForm
             {
                 try {
                     while (isScreen) {
-                        var socket = socketScreen.Accept();
-                        new Thread(accept) { IsBackground = true }.Start(socket);
+                        new Thread(accept) { IsBackground = true }.Start(socketScreen);
                     }
                 }
                 catch (SocketException e) {
@@ -385,12 +384,13 @@ namespace SocketService.WinForm
             socket.Receive(bytes);
             var json = JsonConvert.DeserializeObject<MainSocket>(Encoding.UTF8.GetString(bytes));
             var size = Screen.AllScreens[0].Bounds.Size;
+            ScreenUtil.size = size;
             if (json != null) {
                 try {
                     while (isScreen) {
                         var sw = new Stopwatch();
                         sw.Start();
-                        socket.Send(new ScreenUtil().GetScreenByte(size));
+                        socket.Send( ScreenUtil.GetScreenByte());
                         sw.Stop();
                         GC.Collect();
                     }

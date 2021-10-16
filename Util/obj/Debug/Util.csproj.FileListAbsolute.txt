@@ -23,3 +23,9 @@ D:\项目文件\socket-control-screen\Util\obj\Debug\Util.csproj.CoreCompileInpu
 D:\项目文件\socket-control-screen\Util\obj\Debug\Util.csproj.CopyComplete
 D:\项目文件\socket-control-screen\Util\obj\Debug\Util.dll
 D:\项目文件\socket-control-screen\Util\obj\Debug\Util.pdb
+D:\project\socket-control-screen\Util\bin\Debug\Util.dll
+D:\project\socket-control-screen\Util\bin\Debug\Util.pdb
+D:\project\socket-control-screen\Util\obj\Debug\Util.csproj.AssemblyReference.cache
+D:\project\socket-control-screen\Util\obj\Debug\Util.csproj.CoreCompileInputs.cache
+D:\project\socket-control-screen\Util\obj\Debug\Util.dll
+D:\project\socket-control-screen\Util\obj\Debug\Util.pdb

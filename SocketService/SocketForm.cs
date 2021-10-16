@@ -25,13 +25,23 @@ namespace SocketService
         /// </summary>
         private Socket MainSocket;
         private int MainPort = 10426;
+        private int ScreenPort = 11030;
+        /// <summary>
+        /// 客户端
+        /// </summary>
         public readonly static Dictionary<string,Socket> sockets= new Dictionary<string,Socket>();
+        public readonly static Dictionary<string,Socket> ScreenSockets = new Dictionary<string,Socket>();
         public static bool isClose = true;
         public static MainSocketManagement mainSocketManagement;
         public static bool isScreen = false;
         public static ScreenShow screenShow;
         public static Form GetForm;
         public static Button getScreenBut;
+        public static List<string> OpenScreen = new List<string>();
+        /// <summary>
+        /// 屏幕接收Socket
+        /// </summary>
+        public static Socket ScreenSocket;
         public SocketForm()
         {
             InitializeComponent();
@@ -49,6 +59,40 @@ namespace SocketService
                     initialize();
                 }
             }
+            try
+            {
+                initializeSreen();
+            }
+            catch (SocketException s)
+            {
+                if (s.Message == "通常每个套接字地址(协议/网络地址/端口)只允许使用一次。")
+                {
+                    ScreenPort += 1;
+                    initializeSreen();
+                }
+            }
+        }
+        /// <summary>
+        /// 屏幕接收Socket
+        /// </summary>
+        public void initializeSreen()
+        {
+            var port = new IPEndPoint(IPAddress.Any, ScreenPort);
+            ScreenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            ScreenSocket.Bind(port);
+            ScreenSocket.Listen(int.MaxValue);
+            //new Thread(SrennReceive) { IsBackground = true}.Start();
+        }
+        /// <summary>
+        /// 
+        /// </summary>
+        public void SrennReceive()
+        {
+            while (isClose)
+            {
+                var socket=ScreenSocket.Accept();
+                ScreenSockets.Add(socket.RemoteEndPoint.ToString(),socket);
+            }
         }
         public void initialize()
         {
@@ -56,8 +100,6 @@ namespace SocketService
             getScreenBut = getScreen;
             MainSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
             var port = new IPEndPoint(IPAddress.Any, MainPort);
-            height.Text = "1080";
-            width.Text = "720";
             MainSocket.Bind(port);
             MainSocket.Listen(int.MaxValue);
             log.AppendText($"Socket服务启动成功,ip列表{string.Join(",", NetworkUtil.GetLocalIPs())}服务端口：{MainPort}\r\n");
@@ -97,52 +139,39 @@ namespace SocketService
             }
         }
 
-        private void getScreen_Click(object sender, EventArgs e)
+        private void GetScreen_Click(object sender, EventArgs e)
         {
-            if (isScreen) {
-                screenShow.Close();
+            var data = (string)SocketList.Items[SocketList.SelectedIndex];
+            var socket = sockets.Where(a => a.Key == data)
+                 .FirstOrDefault();
+            if (OpenScreen.Any(a => a == socket.Key))
+            {
+                MessageBox.Show("已经打开屏幕共享");
+                return;
             }
-            else {
-                if (string.IsNullOrEmpty(height.Text) || string.IsNullOrEmpty(width.Text)) {
-                    MessageBox.Show("请先设置屏幕大小在启动");
-                    return;
-                }
-                var data = (string)SocketList.Items[SocketList.SelectedIndex];
-                var socket = sockets.Where(a => a.Key == data)
-                     .FirstOrDefault();
-
-                var mainSocket = new MainSocket();
-                mainSocket.Name = "准备接收屏幕流";
-                mainSocket.Data = $"{11234}";
-                mainSocket.Statue = MainSocketEnum.Screen;
-                var json = JsonConvert.SerializeObject(mainSocket);
-                socket.Value.Send(Encoding.UTF8.GetBytes(json));
-                screenShow = new ScreenShow
-                {
-                    Widths = Convert.ToInt32(width.Text),
-                    Heights = Convert.ToInt32(height.Text),
-                    ip = data.Split(':')[0],
-                    ClientIp = socket.Key,
-                    Post = Convert.ToInt32(mainSocket.Data)
-                };
-                screenShow.Show();
-                GetForm.Visible = false;
-            }
-            getScreen.Text = isScreen ? "获取屏幕":"关闭获取屏幕";
-            isScreen = !isScreen;
+            var mainSocket = new MainSocket();
+            mainSocket.Name = "准备接收屏幕流";
+            mainSocket.Data = $"{ScreenPort}";
+            mainSocket.Statue = MainSocketEnum.Screen;
+            var json = JsonConvert.SerializeObject(mainSocket);
+            socket.Value.Send(Encoding.UTF8.GetBytes(json));
+            var socketSrenn = ScreenSocket.Accept();
+            ScreenSockets.Add(socketSrenn.RemoteEndPoint.ToString(), socketSrenn);
+            OpenScreen.Add(socket.Key);
+            screenShow = new ScreenShow
+            {
+                Widths = 1080,
+                Heights = 1920,
+                ip = data.Split(':')[0],
+                ClientIp = socket.Key,
+                Post = Convert.ToInt32(mainSocket.Data),
+                ScreenSocket = socketSrenn
+            };
+            screenShow.Show();
         }
         public static void Visibles()
         {
             GetForm.Visible = !GetForm.Visible;
-        }
-        private void height_TextChanged(object sender, EventArgs e)
-        {
-            VerificationUtil.NumeralsLimit(sender);
-        }
-
-        private void width_TextChanged(object sender, EventArgs e)
-        {
-            VerificationUtil.NumeralsLimit(sender);
         }
 
         private void SocketForm_FormClosing(object sender, FormClosingEventArgs e)

@@ -46,15 +46,15 @@ namespace SocketService.WinForm
         }
         public void SocketData()
         {
-            ScreenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            try {
-
-                ScreenSocket.Connect(IPAddress.Parse(ip), Post);
-            }
-            catch (SocketException) {
-                Thread.Sleep(2000);
-                ScreenSocket.Connect(IPAddress.Parse(ip), Post);
-            }
+            //ScreenSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+            //try {
+            //    ScreenSocket.Connect(IPAddress.Any, Post);
+            //}
+            //catch (SocketException) {
+            //    Thread.Sleep(2000);
+            //    ScreenSocket.Connect(IPAddress.Any, Post);
+            //}
+            //ScreenSocket.Listen(int.MaxValue);
             new Thread(SrceenSocketPush).Start(ScreenSocket);
         }
         public void SrceenSocketPush(object obj)
@@ -145,6 +145,7 @@ namespace SocketService.WinForm
             SocketForm.GetForm.Visible = true;
             SocketForm.isScreen = false;
             SocketForm.getScreenBut.Text = "获取屏幕";
+            SocketForm.OpenScreen.Remove(ClientIp);
         }
 
         private void images_MouseClick(object sender, MouseEventArgs e)
