@@ -81,7 +81,7 @@ namespace SocketService.WinForm
                                 Close();
                                 return;
                             }
-                            images.Image =new Bitmap(new MemoryStream(screenByte.Take(len).ToArray()));
+                            images.Image =new Bitmap(new MemoryStream(screenByte.ToArray()));
 
                         }
                         catch (ArgumentException a) {

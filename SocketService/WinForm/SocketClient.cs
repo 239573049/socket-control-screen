@@ -388,10 +388,10 @@ namespace SocketService.WinForm
             if (json != null) {
                 try {
                     while (isScreen) {
-                        var sw = new Stopwatch();
-                        sw.Start();
+                        //var sw = new Stopwatch();
+                        //sw.Start();
                         socket.Send( ScreenUtil.GetScreenByte());
-                        sw.Stop();
+                        //sw.Stop();
                         GC.Collect();
                     }
                 }

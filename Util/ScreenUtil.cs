@@ -11,6 +11,7 @@ namespace Util
 {
     public class ScreenUtil
     {
+        static MemoryStream ms = new MemoryStream();
         public static Size size = new Size(1920,1080);
         static Bitmap bitmap = new Bitmap(size.Width, size.Height);
         static Graphics g = Graphics.FromImage(bitmap);
@@ -21,10 +22,7 @@ namespace Util
         /// <returns></returns>
         public static byte[] GetScreenByte()
         {
-            MemoryStream ms = new MemoryStream();
-            
             g.CopyFromScreen(Point.Empty, Point.Empty, size);
-            //g.Dispose();
             bitmap.Save(ms, ImageFormat.Jpeg);
             return ms.GetBuffer();
         }
